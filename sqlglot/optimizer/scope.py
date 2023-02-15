@@ -1,4 +1,5 @@
 import itertools
+import typing as t
 from collections import defaultdict
 from enum import Enum, auto
 
@@ -71,7 +72,7 @@ class Scope:
         self._external_columns = None
         self._join_hints = None
 
-    def branch(self, expression, scope_type, chain_sources=None, **kwargs):
+    def branch(self, expression, scope_type, chain_sources=None, **kwargs) -> "Scope":
         """Branch from the current scope to a new, inner scope"""
         return Scope(
             expression=expression.unnest(),
@@ -489,7 +490,7 @@ def _traverse_scope(scope):
     yield scope
 
 
-def _traverse_select(scope):
+def _traverse_select(scope: Scope):
     yield from _traverse_derived_tables(scope.ctes, scope, ScopeType.CTE)
     yield from _traverse_derived_tables(scope.derived_tables, scope, ScopeType.DERIVED_TABLE)
     yield from _traverse_subqueries(scope)
@@ -527,8 +528,8 @@ def _set_udtf_scope(scope):
     _traverse_subqueries(scope)
 
 
-def _traverse_derived_tables(derived_tables, scope, scope_type):
-    sources = {}
+def _traverse_derived_tables(derived_tables, scope: Scope, scope_type: ScopeType):
+    sources: dict = {}
     is_cte = scope_type == ScopeType.CTE
 
     for derived_table in derived_tables:
@@ -591,7 +592,7 @@ def _add_table_sources(scope):
     scope.sources.update(sources)
 
 
-def _traverse_subqueries(scope):
+def _traverse_subqueries(scope: Scope) -> t.Generator[Scope, None, None]:
     for subquery in scope.subqueries:
         top = None
         for child_scope in _traverse_scope(scope.branch(subquery, scope_type=ScopeType.SUBQUERY)):

@@ -121,6 +121,7 @@ SELECT DATE_TRUNC(x.a, MONTH) AS a FROM x AS x;
 --------------------------------------
 -- Derived tables
 --------------------------------------
+# title:derived
 SELECT y.a AS a FROM (SELECT x.a AS a FROM x AS x) AS y;
 SELECT y.a AS a FROM (SELECT x.a AS a FROM x AS x) AS y;
 

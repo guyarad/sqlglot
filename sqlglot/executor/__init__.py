@@ -32,6 +32,7 @@ def execute(
     schema: t.Optional[t.Dict | Schema] = None,
     read: DialectType = None,
     tables: t.Optional[t.Dict] = None,
+    executor_env: t.Optional[t.Dict] = None,
 ) -> Table:
     """
     Run a sql query against data.
@@ -45,6 +46,7 @@ def execute(
             3. {catalog: {db: {table: {col: type}}}}
         read: the SQL dialect to apply during parsing (eg. "spark", "hive", "presto", "mysql").
         tables: additional tables to register.
+        executor_env: additional environment mapping for the executor.
 
     Returns:
         Simple columnar data structure.
@@ -75,7 +77,7 @@ def execute(
     logger.debug("Logical Plan: %s", plan)
 
     now = time.time()
-    result = PythonExecutor(tables=tables_).execute(plan)
+    result = PythonExecutor(env=executor_env, tables=tables_).execute(plan)
 
     logger.debug("Query finished: %f", time.time() - now)
 

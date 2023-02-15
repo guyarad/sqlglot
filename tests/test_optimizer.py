@@ -142,6 +142,19 @@ class TestOptimizer(unittest.TestCase):
             optimizer.normalize.normalize,
         )
 
+    def test_bla(self):
+        sql = "SELECT y.a AS aa FROM (SELECT x.a AS a FROM x AS z) AS q;"
+        expression = parse_one(sql)
+        optimizer.qualify_columns.qualify_columns(expression, self.schema)
+        optimizer.optimize(expression, self.schema)
+        # dialect = None
+        # pretty = False
+        # df1 = self.conn.execute(
+        #     sqlglot.transpile(sql, read=dialect, write="duckdb")[0]
+        # ).df()
+        # df2 = self.conn.execute(optimized.sql(pretty=pretty, dialect="duckdb")).df()
+        # assert_frame_equal(df1, df2)
+
     def test_qualify_columns(self):
         def qualify_columns(expression, **kwargs):
             expression = optimizer.qualify_tables.qualify_tables(expression)

@@ -31,6 +31,7 @@ setup(
             "mypy>=0.990",
             "pandas",
             "pyspark",
+            "pyspark-stubs",
             "python-dateutil",
             "pdoc",
             "pre-commit",
